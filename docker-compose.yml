@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  db-gearment:
+    image: postgres:13.2-alpine
+    container_name: db-gearment
+    environment:
+      POSTGRES_USER: gearment
+      POSTGRES_PASSWORD: gearment
+      POSTGRES_DB: gearment
+    ports:
+      - '5432:5432'
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
