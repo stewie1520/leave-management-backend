@@ -31,4 +31,8 @@ export abstract class Entity<P extends EntityProps = EntityProps> {
 
     return this.id === object.id;
   }
+
+  public getProps(): P {
+    return this.props;
+  }
 }

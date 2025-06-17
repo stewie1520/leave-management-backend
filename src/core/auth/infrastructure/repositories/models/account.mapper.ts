@@ -10,7 +10,7 @@ export class AccountMapper {
     });
   }
 
-  toEntity(account: AccountModel): Account {
+  toDomain(account: AccountModel): Account {
     return Account.create({
       id: account.id,
       email: account.email,

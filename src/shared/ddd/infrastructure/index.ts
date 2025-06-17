@@ -1,1 +1,2 @@
-export * from './typeorm-repository';
+export * from './repositories';
+export * from './decorators';

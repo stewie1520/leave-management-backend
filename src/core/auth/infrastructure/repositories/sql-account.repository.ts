@@ -15,7 +15,7 @@ export class SqlAccountRepository
   private readonly accountMapper = new AccountMapper();
 
   aggregateRootToModel = (args) => this.accountMapper.toModel(args);
-  modelToAggregateRoot = (args) => this.accountMapper.toEntity(args);
+  modelToAggregateRoot = (args) => this.accountMapper.toDomain(args);
 
   constructor(
     dataSource: DataSource,

@@ -1,7 +1,7 @@
 import { DataSource, EntityManager, ObjectLiteral } from 'typeorm';
 
-import { Repository } from '../application';
-import { AggregateRoot, EntityProps } from '../domain';
+import { Repository } from '../../application';
+import { AggregateRoot, EntityProps } from '../../domain';
 
 export abstract class TypeormRepository<
   DomainAggregateRoot extends AggregateRoot<EntityProps>,
