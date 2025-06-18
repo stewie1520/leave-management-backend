@@ -14,6 +14,8 @@ import { SqlAccountRepository } from './infrastructure/repositories/sql-account.
 import { AuthProvider } from './infrastructure/services/auth.provider';
 import { JwtTokenService } from './infrastructure/services/jwt-token.service';
 import { BcryptPasswordService } from './infrastructure/services/password.service';
+import { DatabaseError } from 'pg';
+import { DatabaseModule } from 'src/shared/database/database.module';
 
 const controllers = [LoginPostController];
 const commands = [LoginCommandHandler];

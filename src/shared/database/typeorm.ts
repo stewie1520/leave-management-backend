@@ -1,7 +1,7 @@
 import { config as dotenvConfig } from 'dotenv';
 import { DataSource, DataSourceOptions } from 'typeorm';
 
-dotenvConfig({ path: '.env' });
+dotenvConfig({ path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env' });
 
 const config = {
   type: 'postgres',

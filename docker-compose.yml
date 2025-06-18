@@ -13,5 +13,15 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
 
+  db-gearment-test:
+    image: postgres:13.2-alpine
+    container_name: db-gearment-test
+    environment:
+      POSTGRES_USER: gearment
+      POSTGRES_PASSWORD: gearment
+      POSTGRES_DB: gearment
+    ports:
+      - '5433:5432'
+
 volumes:
   db-data:
