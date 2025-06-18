@@ -10,7 +10,7 @@ import {
 import { CommandBus } from '@nestjs/cqrs';
 import { ApiTags } from '@nestjs/swagger';
 import { IsEnum } from 'class-validator';
-import { AccountParam } from 'src/shared/ddd';
+import { AccountParam, Roles } from 'src/shared/rbac';
 
 import { ReviewLeaveRequestCommand } from '../../../../application/commands/review-leave-request/review-leave-request.command';
 import { LeaveRequestStatus } from '../../../../domain/enums/leave-request-status.enum';
@@ -19,6 +19,7 @@ import {
   LeaveRequestNotFoundError,
 } from '../../../../domain/errors';
 import { UnauthorizedLeaveRequestActionError } from '../../../../domain/errors/unauthorized-leave-request-action.error';
+import { EmployeeRole } from '../../../../domain/enums/employee-role.enum';
 
 class ReviewLeaveRequestDto {
   @IsEnum(LeaveRequestStatus, {
@@ -29,6 +30,7 @@ class ReviewLeaveRequestDto {
 
 @Controller('leave-request')
 @ApiTags('leave-request')
+@Roles(EmployeeRole.MANAGER)
 export class ReviewLeaveRequestPatchController {
   constructor(
     private readonly commandBus: CommandBus,

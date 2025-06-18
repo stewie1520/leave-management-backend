@@ -7,11 +7,12 @@ import {
 } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
 import { ApiTags } from '@nestjs/swagger';
-import { AccountParam } from 'src/shared/ddd';
+import { AccountParam, Roles } from 'src/shared/rbac';
 
 import { GetLeaveBalanceQuery } from '../../../application/queries/get-leave-balance/get-leave-balance.query';
 import { LeaveBalance } from '../../../domain/entities/leave-balance.entity';
 import { EmployeeNotFoundError } from '../../../domain/errors';
+import { EmployeeRole } from 'src/core/employee/domain/enums/employee-role.enum';
 
 class LeaveBalanceDto {
   totalDays: number;
@@ -25,6 +26,7 @@ class LeaveBalanceDto {
 
 @Controller('leave-balance')
 @ApiTags('leave-balance')
+@Roles(EmployeeRole.MANAGER, EmployeeRole.STAFF)
 export class LeaveBalanceGetController {
   constructor(
     private readonly queryBus: QueryBus,

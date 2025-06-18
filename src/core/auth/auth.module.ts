@@ -13,6 +13,8 @@ import { SqlAccountRepository } from './infrastructure/repositories/sql-account.
 import { JwtTokenService } from './infrastructure/services/jwt-token.service';
 import { BcryptPasswordService } from './infrastructure/services/password.service';
 import { JwtModule } from '@nestjs/jwt';
+import { AuthService } from './application/services/auth.service';
+import { AuthProvider } from './infrastructure/services/auth.provider';
 
 const controllers = [LoginPostController];
 const commands = [LoginCommandHandler];
@@ -33,6 +35,10 @@ const services = [
     provide: PasswordService,
     useClass: BcryptPasswordService,
   },
+  {
+    provide: AuthService,
+    useClass: AuthProvider,
+  },
 ];
 
 @Module({
@@ -44,5 +50,6 @@ const services = [
   ],
   controllers,
   providers: [...repositories, ...services, ...commands, Logger],
+  exports: [AuthService],
 })
 export class AuthModule {}

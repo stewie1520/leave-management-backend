@@ -10,12 +10,14 @@ import { QueryBus } from '@nestjs/cqrs';
 import { ApiTags } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsNumber, IsOptional, Max, Min } from 'class-validator';
-import { AccountParam, PaginateOutput } from 'src/shared/ddd';
+import { PaginateOutput } from 'src/shared/ddd';
+import { AccountParam, Roles } from 'src/shared/rbac';
 
-import { EmployeeNotFoundError } from '../../../../domain/errors';
 import { ListLeaveRequestsQuery } from '../../../../application/queries/list-leave-requests/list-leave-requests.command';
 import { LeaveRequest } from '../../../../domain/entities/leave-request.entity';
+import { EmployeeRole } from '../../../../domain/enums/employee-role.enum';
 import { LeaveRequestStatus } from '../../../../domain/enums/leave-request-status.enum';
+import { EmployeeNotFoundError } from '../../../../domain/errors';
 
 class LeaveRequestInDto {
   @IsNumber()
@@ -79,6 +81,7 @@ class LeaveRequestOutDto {
 
 @Controller('leave-request')
 @ApiTags('leave-request')
+@Roles(EmployeeRole.MANAGER, EmployeeRole.STAFF)
 export class ListLeaveRequestsGetController {
   constructor(
     private readonly queryBus: QueryBus,

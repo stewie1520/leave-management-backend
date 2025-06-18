@@ -10,11 +10,12 @@ import { CommandBus } from '@nestjs/cqrs';
 import { ApiTags } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsDateString, IsNotEmpty, IsString } from 'class-validator';
-import { AccountParam } from 'src/shared/ddd';
+import { AccountParam, Roles } from 'src/shared/rbac';
 
 import { SubmitLeaveRequestCommand } from '../../../../application/commands/submit-leave-request/submit-leave-request.command';
 import { EmployeeNotFoundError } from '../../../../domain/errors';
 import { InsufficientLeaveBalanceError } from '../../../../domain/errors/insufficient-leave-balance.error';
+import { EmployeeRole } from '../../../../domain/enums/employee-role.enum';
 
 class SubmitLeaveRequestDto {
   @IsDateString()
@@ -32,6 +33,7 @@ class SubmitLeaveRequestDto {
 
 @Controller('leave-request')
 @ApiTags('leave-request')
+@Roles(EmployeeRole.MANAGER, EmployeeRole.STAFF)
 export class SubmitLeaveRequestPostController {
   constructor(
     private readonly commandBus: CommandBus,
