@@ -10,4 +10,8 @@ export class BcryptPasswordService extends PasswordService {
   comparePassword(password: string, hashedPassword: string): Promise<boolean> {
     return bcrypt.compare(password, hashedPassword);
   }
+
+  hashPassword(password: string): Promise<string> {
+    return bcrypt.hash(password, 10);
+  }
 }

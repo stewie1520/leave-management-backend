@@ -6,11 +6,12 @@ import {
   Logger,
   Param,
   Patch,
+  UseGuards,
 } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { ApiTags } from '@nestjs/swagger';
 import { IsEnum } from 'class-validator';
-import { AccountParam, Roles } from 'src/shared/rbac';
+import { AccountParam, Roles, RolesGuard } from 'src/shared/rbac';
 
 import { ReviewLeaveRequestCommand } from '../../../../application/commands/review-leave-request/review-leave-request.command';
 import { LeaveRequestStatus } from '../../../../domain/enums/leave-request-status.enum';
@@ -31,6 +32,7 @@ class ReviewLeaveRequestDto {
 @Controller('leave-request')
 @ApiTags('leave-request')
 @Roles(EmployeeRole.MANAGER)
+@UseGuards(RolesGuard)
 export class ReviewLeaveRequestPatchController {
   constructor(
     private readonly commandBus: CommandBus,

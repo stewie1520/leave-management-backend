@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -35,7 +36,10 @@ export class EmployeeModel {
   @OneToMany(() => LeaveRequestModel, (leaveRequest) => leaveRequest.employee)
   leaveRequests: LeaveRequestModel[];
 
-  @OneToOne(() => LeaveBalanceModel, (leaveBalance) => leaveBalance.employee)
+  @OneToOne(() => LeaveBalanceModel, (leaveBalance) => leaveBalance.employee, {
+    cascade: true,
+  })
+  @JoinColumn()
   leaveBalance: LeaveBalanceModel;
 
   @CreateDateColumn()

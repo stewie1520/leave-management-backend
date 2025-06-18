@@ -36,4 +36,17 @@ export class SqlEmployeeRepository
       return null;
     }
   }
+
+  override async findOne(id: string): Promise<Employee | null> {
+    try {
+      const employee = await this.manager
+        .getRepository(EmployeeModel)
+        .findOne({ where: { id }, relations: ['leaveBalance'] });
+
+      return employee ? this.modelToAggregateRoot(employee) : null;
+    } catch (error) {
+      this.loggerService.warn(error);
+      return null;
+    }
+  }
 }

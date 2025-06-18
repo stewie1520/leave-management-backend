@@ -1,9 +1,11 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
+import { commands } from './commands';
+import { AuthService } from './core/auth/application/services/auth.service';
 import { AuthModule } from './core/auth/auth.module';
 import { EmployeeModule } from './core/employee/employee.module';
-import { AuthService } from './core/auth/application/services/auth.service';
+import { DatabaseModule } from './shared/database/database.module';
 
 @Module({
   imports: [
@@ -12,7 +14,9 @@ import { AuthService } from './core/auth/application/services/auth.service';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    DatabaseModule,
   ],
+  providers: [...commands],
 })
 export class AppModule {
   constructor(private readonly authService: AuthService) {}

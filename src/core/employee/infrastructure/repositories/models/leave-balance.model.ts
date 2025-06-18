@@ -4,7 +4,6 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -18,7 +17,6 @@ export class LeaveBalanceModel {
   id: string;
 
   @OneToOne(() => EmployeeModel, (employee) => employee.leaveBalance)
-  @JoinColumn()
   employee: EmployeeModel;
 
   @Column()

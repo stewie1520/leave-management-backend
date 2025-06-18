@@ -40,7 +40,7 @@ export class ReviewLeaveRequestCommandHandler
       throw new LeaveRequestNotFoundError();
     }
 
-    const employee = await this.employeeRepository.findByAccountId(
+    const employee = await this.employeeRepository.findOne(
       leaveRequest.employeeId,
     );
 

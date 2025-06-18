@@ -4,10 +4,11 @@ import {
   HttpException,
   HttpStatus,
   Logger,
+  UseGuards,
 } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
 import { ApiTags } from '@nestjs/swagger';
-import { AccountParam, Roles } from 'src/shared/rbac';
+import { AccountParam, Roles, RolesGuard } from 'src/shared/rbac';
 
 import { GetLeaveBalanceQuery } from '../../../application/queries/get-leave-balance/get-leave-balance.query';
 import { LeaveBalance } from '../../../domain/entities/leave-balance.entity';
@@ -27,6 +28,7 @@ class LeaveBalanceDto {
 @Controller('leave-balance')
 @ApiTags('leave-balance')
 @Roles(EmployeeRole.MANAGER, EmployeeRole.STAFF)
+@UseGuards(RolesGuard)
 export class LeaveBalanceGetController {
   constructor(
     private readonly queryBus: QueryBus,

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { randomUUID } from 'crypto';
-import dayjs from 'dayjs';
+import * as dayjs from 'dayjs';
 import { DataSource } from 'typeorm';
 
 import {

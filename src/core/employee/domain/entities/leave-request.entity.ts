@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+import * as dayjs from 'dayjs';
 import { AggregateRoot, EntityProps } from 'src/shared/ddd';
 
 import { LeaveRequestStatus } from '../enums/leave-request-status.enum';
@@ -98,10 +98,7 @@ export class LeaveRequest extends AggregateRoot<LeaveRequestProps> {
   }
 
   public static create(props: LeaveRequestProps): LeaveRequest {
-    const leaveRequest = new LeaveRequest({
-      ...props,
-      status: LeaveRequestStatus.PENDING,
-    });
+    const leaveRequest = new LeaveRequest(props);
 
     if (props.startDate > props.endDate) {
       throw new Error('Start date must be before or equal to end date');

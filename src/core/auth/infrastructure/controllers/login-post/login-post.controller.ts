@@ -26,8 +26,10 @@ class LoginResponseDto {
   expiresAt: Date;
   accountId: string;
 
-  constructor(copy: LoginResponseDto) {
-    Object.assign(this, copy);
+  constructor(token: Token) {
+    this.value = token.value;
+    this.expiresAt = token.expiresAt;
+    this.accountId = token.accountId;
   }
 }
 
