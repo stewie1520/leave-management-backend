@@ -17,11 +17,13 @@ export class SeedEmployeesCommand extends CommandRunner {
     super();
   }
 
+  readonly password = 'Gearment@123';
+
   async run(): Promise<void> {
     try {
       const staffAcount = Account.create({
         email: 'donghuuhieu1520+emp@gmail.com',
-        password: await this.passwordService.hashPassword('Gearmen@123'),
+        password: await this.passwordService.hashPassword(this.password),
       });
 
       await this.accountRepository.save(staffAcount);
@@ -40,7 +42,7 @@ export class SeedEmployeesCommand extends CommandRunner {
 
       const managerAccount = Account.create({
         email: 'donghuuhieu1520+mgr@gmail.com',
-        password: await this.passwordService.hashPassword('Gearmen@123'),
+        password: await this.passwordService.hashPassword(this.password),
       });
 
       await this.accountRepository.save(managerAccount);

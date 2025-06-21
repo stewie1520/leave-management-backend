@@ -1,20 +1,25 @@
 import { INestApplication } from '@nestjs/common';
-import { DataSource } from 'typeorm';
 import { Test } from '@nestjs/testing';
-import { TestModule } from 'src/shared/test';
 import { EmployeeModule } from 'src/core/employee/employee.module';
+import { TestModule } from 'src/shared/test';
+import { DataSource } from 'typeorm';
 
+import { randomUUID } from 'crypto';
+import * as dayjs from 'dayjs';
+import { Employee } from 'src/core/employee/domain/entities/employee.entity';
+import { LeaveRequest } from 'src/core/employee/domain/entities/leave-request.entity';
+import { EmployeeRole } from 'src/core/employee/domain/enums/employee-role.enum';
+import { LeaveRequestStatus } from 'src/core/employee/domain/enums/leave-request-status.enum';
+import {
+  EmployeeNotFoundError,
+  LeaveRequestNotFoundError,
+  UnauthorizedLeaveRequestActionError,
+} from '../../../domain/errors';
+import { EmployeeRepository, LeaveRequestRepository } from '../../repositories';
 import {
   ReviewLeaveRequestCommand,
   ReviewLeaveRequestCommandHandler,
 } from './review-leave-request.command';
-import { Employee } from 'src/core/employee/domain/entities/employee.entity';
-import { LeaveRequest } from 'src/core/employee/domain/entities/leave-request.entity';
-import { EmployeeRole } from 'src/core/employee/domain/enums/employee-role.enum';
-import { randomUUID } from 'crypto';
-import * as dayjs from 'dayjs';
-import { LeaveRequestStatus } from 'src/core/employee/domain/enums/leave-request-status.enum';
-import { EmployeeRepository, LeaveRequestRepository } from '../../repositories';
 
 describe(ReviewLeaveRequestCommand.name, () => {
   let commandHandler: ReviewLeaveRequestCommandHandler;
@@ -103,6 +108,42 @@ describe(ReviewLeaveRequestCommand.name, () => {
       );
 
       expect(updatedLeaveRequest?.status).toBe(LeaveRequestStatus.APPROVED);
+    });
+
+    it('should throw error if reviewer is not a manager', async () => {
+      const command = new ReviewLeaveRequestCommand(
+        leaveRequest.id,
+        staffEmployee.accountId,
+        LeaveRequestStatus.APPROVED,
+      );
+
+      await expect(commandHandler.execute(command)).rejects.toThrow(
+        UnauthorizedLeaveRequestActionError,
+      );
+    });
+
+    it('should throw error if leave request is not found', async () => {
+      const command = new ReviewLeaveRequestCommand(
+        randomUUID(),
+        managerEmployee.accountId,
+        LeaveRequestStatus.APPROVED,
+      );
+
+      await expect(commandHandler.execute(command)).rejects.toThrow(
+        LeaveRequestNotFoundError,
+      );
+    });
+
+    it('should throw error if employee is not found', async () => {
+      const command = new ReviewLeaveRequestCommand(
+        leaveRequest.id,
+        randomUUID(),
+        LeaveRequestStatus.APPROVED,
+      );
+
+      await expect(commandHandler.execute(command)).rejects.toThrow(
+        EmployeeNotFoundError,
+      );
     });
   });
 });
