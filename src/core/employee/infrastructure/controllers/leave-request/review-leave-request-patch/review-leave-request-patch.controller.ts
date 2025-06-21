@@ -9,22 +9,24 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
-import { ApiTags } from '@nestjs/swagger';
-import { IsEnum } from 'class-validator';
+import { ApiBearerAuth, ApiProperty, ApiTags } from '@nestjs/swagger';
+import { IsIn } from 'class-validator';
 import { AccountParam, Roles, RolesGuard } from 'src/shared/rbac';
 
 import { ReviewLeaveRequestCommand } from '../../../../application/commands/review-leave-request/review-leave-request.command';
+import { EmployeeRole } from '../../../../domain/enums/employee-role.enum';
 import { LeaveRequestStatus } from '../../../../domain/enums/leave-request-status.enum';
 import {
   EmployeeNotFoundError,
   LeaveRequestNotFoundError,
 } from '../../../../domain/errors';
 import { UnauthorizedLeaveRequestActionError } from '../../../../domain/errors/unauthorized-leave-request-action.error';
-import { EmployeeRole } from '../../../../domain/enums/employee-role.enum';
 
 class ReviewLeaveRequestDto {
-  @IsEnum(LeaveRequestStatus, {
-    message: 'Status must be either APPROVED or REJECTED',
+  @IsIn([LeaveRequestStatus.APPROVED, LeaveRequestStatus.REJECTED])
+  @ApiProperty({
+    enum: [LeaveRequestStatus.APPROVED, LeaveRequestStatus.REJECTED],
+    enumName: 'LeaveRequestStatus',
   })
   status: LeaveRequestStatus.APPROVED | LeaveRequestStatus.REJECTED;
 }
@@ -33,6 +35,7 @@ class ReviewLeaveRequestDto {
 @ApiTags('leave-request')
 @Roles(EmployeeRole.MANAGER)
 @UseGuards(RolesGuard)
+@ApiBearerAuth()
 export class ReviewLeaveRequestPatchController {
   constructor(
     private readonly commandBus: CommandBus,

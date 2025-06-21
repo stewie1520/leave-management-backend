@@ -7,7 +7,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { LoginCommand } from 'src/core/auth/application/commands/login/login.command';
 import { Token } from 'src/core/auth/domain/entities/token.entity';
@@ -42,6 +42,10 @@ export class LoginPostController {
   ) {}
 
   @Post('/login')
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: LoginResponseDto,
+  })
   async login(@Body() loginDto: LoginDto): Promise<LoginResponseDto> {
     try {
       const token = await this.commandBus.execute<LoginCommand, Token>(

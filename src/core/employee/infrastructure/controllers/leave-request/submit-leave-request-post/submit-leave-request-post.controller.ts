@@ -8,7 +8,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsDate, IsNotEmpty, IsString } from 'class-validator';
 import { AccountParam, Roles, RolesGuard } from 'src/shared/rbac';
@@ -36,6 +36,7 @@ class SubmitLeaveRequestDto {
 @ApiTags('leave-request')
 @Roles(EmployeeRole.MANAGER, EmployeeRole.STAFF)
 @UseGuards(RolesGuard)
+@ApiBearerAuth()
 export class SubmitLeaveRequestPostController {
   constructor(
     private readonly commandBus: CommandBus,

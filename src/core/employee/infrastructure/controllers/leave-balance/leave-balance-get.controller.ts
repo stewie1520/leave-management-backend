@@ -7,15 +7,15 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AccountParam, Roles, RolesGuard } from 'src/shared/rbac';
 
+import { EmployeeRole } from 'src/core/employee/domain/enums/employee-role.enum';
 import { GetLeaveBalanceQuery } from '../../../application/queries/get-leave-balance/get-leave-balance.query';
 import { LeaveBalance } from '../../../domain/entities/leave-balance.entity';
 import { EmployeeNotFoundError } from '../../../domain/errors';
-import { EmployeeRole } from 'src/core/employee/domain/enums/employee-role.enum';
 
-class LeaveBalanceDto {
+class LeaveBalanceOutDto {
   totalDays: number;
   usedDays: number;
 
@@ -29,6 +29,7 @@ class LeaveBalanceDto {
 @ApiTags('leave-balance')
 @Roles(EmployeeRole.MANAGER, EmployeeRole.STAFF)
 @UseGuards(RolesGuard)
+@ApiBearerAuth()
 export class LeaveBalanceGetController {
   constructor(
     private readonly queryBus: QueryBus,
@@ -36,16 +37,24 @@ export class LeaveBalanceGetController {
   ) {}
 
   @Get('/')
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: LeaveBalanceOutDto,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Employee not found',
+  })
   async getLeaveBalance(
     @AccountParam() accountId: string,
-  ): Promise<LeaveBalanceDto> {
+  ): Promise<LeaveBalanceOutDto> {
     try {
       const leaveBalance = await this.queryBus.execute<
         GetLeaveBalanceQuery,
         LeaveBalance
       >(new GetLeaveBalanceQuery(accountId));
 
-      return new LeaveBalanceDto(leaveBalance);
+      return new LeaveBalanceOutDto(leaveBalance);
     } catch (error) {
       this.logger.error('Error getting leave balance', error);
 

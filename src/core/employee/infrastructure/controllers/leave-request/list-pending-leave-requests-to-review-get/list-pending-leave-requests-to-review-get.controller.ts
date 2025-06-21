@@ -8,7 +8,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsNumber, Max, Min } from 'class-validator';
 import { PaginateOutput } from 'src/shared/ddd';
@@ -89,6 +89,7 @@ class LeaveRequestOutDto {
 @ApiTags('leave-request')
 @Roles(EmployeeRole.MANAGER)
 @UseGuards(RolesGuard)
+@ApiBearerAuth()
 export class ListPendingLeaveRequestsToReviewGetController {
   constructor(
     private readonly queryBus: QueryBus,
@@ -96,6 +97,14 @@ export class ListPendingLeaveRequestsToReviewGetController {
   ) {}
 
   @Get('/pending-to-review')
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: LeaveRequestOutDto,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Employee not found',
+  })
   async listPendingLeaveRequestsToReview(
     @AccountParam() accountId: string,
     @Query() query: LeaveRequestInDto,

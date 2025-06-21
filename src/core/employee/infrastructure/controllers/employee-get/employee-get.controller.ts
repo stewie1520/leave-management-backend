@@ -7,7 +7,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AccountParam, Roles, RolesGuard } from 'src/shared/rbac';
 import { EmployeeQuery } from '../../../application/queries/employee/employee.query';
 import { Employee } from '../../../domain/entities/employee.entity';
@@ -32,6 +32,7 @@ class EmployeeOutDto {
 @ApiTags('employee')
 @Roles(EmployeeRole.MANAGER, EmployeeRole.STAFF)
 @UseGuards(RolesGuard)
+@ApiBearerAuth()
 export class EmployeeGetController {
   constructor(
     private readonly queryBus: QueryBus,
@@ -39,6 +40,14 @@ export class EmployeeGetController {
   ) {}
 
   @Get('/')
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: EmployeeOutDto,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Employee not found',
+  })
   async getEmployee(
     @AccountParam() accountId: string,
   ): Promise<EmployeeOutDto> {

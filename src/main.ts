@@ -1,7 +1,12 @@
+import {
+  ConsoleLogger,
+  INestApplication,
+  ValidationPipe,
+} from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import helmet from 'helmet';
-import { ConsoleLogger, ValidationPipe } from '@nestjs/common';
 
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -10,6 +15,10 @@ async function bootstrap() {
       colors: true,
     }),
   });
+
+  if (process.env.NODE_ENV === 'development') {
+    addSwagger(app);
+  }
 
   app.use(helmet());
   app.enableCors({
@@ -24,5 +33,17 @@ async function bootstrap() {
 
   await app.listen(process.env.PORT ?? 3000);
 }
+
+const addSwagger = (app: INestApplication) => {
+  const config = new DocumentBuilder()
+    .setTitle('Gearment API')
+    .setDescription('Gearment API description')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('docs', app, document);
+};
 
 void bootstrap();

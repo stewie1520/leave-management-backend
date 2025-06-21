@@ -6,13 +6,14 @@ import {
   Post,
 } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { TokenParam } from '../../../../../shared/rbac';
 import { LogOutCommand } from '../../../application/commands/logout/logout.command';
 import { TokenPayload } from '../../../application/services/token.service';
 
 @Controller('auth')
 @ApiTags('auth')
+@ApiBearerAuth()
 export class LogoutPostController {
   constructor(
     private readonly commandBus: CommandBus,
