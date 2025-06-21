@@ -8,4 +8,5 @@ export type TokenPayload = {
 export abstract class TokenService {
   abstract createToken(accountId: string): Promise<Token>;
   abstract verifyToken(token: string): Promise<Token>;
+  abstract revoke(tokenId: string): Promise<void>;
 }

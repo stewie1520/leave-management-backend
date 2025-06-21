@@ -23,6 +23,10 @@ export class JwtTokenService implements TokenService {
     private readonly configService: ConfigService,
   ) {}
 
+  async revoke(tokenId: string): Promise<void> {
+    await this.dataSource.getRepository(TokenModel).delete(tokenId);
+  }
+
   async createToken(accountId: string) {
     const tokenId = randomUUID();
 
