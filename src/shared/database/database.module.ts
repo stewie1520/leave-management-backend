@@ -15,9 +15,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         database: configService.get('DATABASE_NAME'),
         logger: 'advanced-console',
         ssl:
-          configService.get('NODE_ENV') === 'production'
-            ? { rejectUnauthorized: false }
-            : undefined,
+          configService.get('DATABASE_HOST') === '127.0.0.1'
+            ? false
+            : configService.get('NODE_ENV') === 'production'
+              ? { rejectUnauthorized: false }
+              : undefined,
         synchronize: false,
         dropSchema: false,
         autoLoadEntities: true,

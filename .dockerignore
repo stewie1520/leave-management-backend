@@ -1,0 +1,18 @@
+node_modules
+dist
+.env
+.git
+.gitignore
+Dockerfile
+README.md
+npm-debug.log
+yarn-error.log
+coverage
+src/**/*.spec.ts    # Exclude NestJS unit test files
+src/**/*.integration.ts # Exclude NestJS integration test files
+test/
+.vscode/             # Exclude VS Code specific files
+eslint.config.mjs    # Exclude ESLint configuration for build
+jest.config.ts       # Exclude Jest configuration
+jest.setup.ts        # Exclude Jest setup file
+pnpm-debug.log* # Exclude pnpm debug logs

@@ -11,7 +11,10 @@ const config = {
   password: `${process.env.DATABASE_PASSWORD}`,
   database: `${process.env.DATABASE_NAME}`,
   entities: ['src/**/*.model{.ts,.js}'],
-  migrations: ['src/migrations/*{.ts,.js}'],
+  migrations:
+    process.env.NODE_ENV === 'production'
+      ? ['dist/src/migrations/*.js']
+      : ['src/migrations/*{.ts,.js}'],
   autoLoadEntities: true,
   synchronize: false,
 };

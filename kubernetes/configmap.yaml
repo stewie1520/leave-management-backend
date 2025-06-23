@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: leave-management-config
+data:
+  NODE_ENV: "production"
+  APP_PORT: "3000"
+  JWT_EXPIRATION_SECONDS: "86400"

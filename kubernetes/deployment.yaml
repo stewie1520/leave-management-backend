@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: leave-management-backend
+  labels:
+    app: leave-management-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: leave-management-backend
+  template:
+    metadata:
+      labels:
+        app: leave-management-backend
+    spec:
+      serviceAccountName: cloudsql-proxy-sa
+      containers:
+        - name: nestjs-app
+          image: gcr.io/ai-interviewer-459609/leave-management-backend:latest
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - secretRef:
+                name: leave-management-secrets
+            - configMapRef:
+                name: leave-management-config
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 1
+          resources:
+            requests:
+              cpu: "100m"  # 0.1 CPU core
+              memory: "256Mi" # 256 Megabytes of memory
+            limits:
+              cpu: "500m"  # 0.5 CPU core
+              memory: "512Mi" # 512 Megabytes of memory
+        - name: cloudsql-proxy
+          # Image for the Cloud SQL Auth Proxy
+          image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:latest
+          command: ["/cloud-sql-proxy", "ai-interviewer-459609:asia-southeast1:leave-management-db"]
+          args:
+            - "--port=5432"
+            - "--credentials-file=/secrets/cloudsql-instance-credentials.json"
+          volumeMounts:
+            - name: cloudsql-instance-credentials
+              mountPath: /secrets/
+              readOnly: true
+          securityContext:
+            runAsNonRoot: true
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "128Mi"
+            limits:
+              cpu: "100m"
+              memory: "256Mi"
+      volumes:
+        - name: cloudsql-instance-credentials
+          secret:
+            secretName: cloudsql-instance-credentials # Refers to the Kubernetes Secret created earlier

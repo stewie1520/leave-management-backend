@@ -1,0 +1,60 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: run-migrations-job
+  labels:
+    app: migration-job
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      serviceAccountName: cloudsql-proxy-sa
+      containers:
+        - name: migration-runner
+          image: gcr.io/ai-interviewer-459609/leave-management-backend:latest
+          imagePullPolicy: Always
+          command: ["npm"]
+          args:
+            - "run"
+            - "typeorm"
+            - "--"
+            - "-d"
+            - "./dist/src/shared/database/typeorm.js"
+            - "migration:run"
+          envFrom:
+            - secretRef:
+                name: leave-management-secrets
+            - configMapRef:
+                name: leave-management-config
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+        - name: cloudsql-proxy
+          image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.0.0
+          imagePullPolicy: Always
+          command: ["/cloud-sql-proxy", "ai-interviewer-459609:asia-southeast1:leave-management-db"]
+          args:
+            - "--port=5432"
+            - "--credentials-file=/secrets/cloudsql-instance-credentials.json"
+          volumeMounts:
+            - name: cloudsql-instance-credentials
+              mountPath: /secrets/
+              readOnly: true
+          securityContext:
+            runAsNonRoot: true
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "128Mi"
+            limits:
+              cpu: "100m"
+              memory: "256Mi"
+      volumes: # Volume for proxy credentials
+        - name: cloudsql-instance-credentials
+          secret:
+            secretName: cloudsql-instance-credentials
+      restartPolicy: OnFailure # Pod will restart if migration fails, up to backoffLimit

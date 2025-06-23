@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: leave-management-ingress
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    kubernetes.io/ingress.global-static-ip-name: "leave-management-backend-ip"
+    ingress.gcp.kubernetes.io/pre-shared-cert: "leave-management-ssl"
+spec:
+  rules:
+    - host: leave-at-backend.xyz
+      http:
+        paths:
+          - path: /*
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: leave-management-service
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - leave-at-backend.xyz
+      secretName: 
+    

@@ -6,6 +6,7 @@ import { AuthService } from './core/auth/application/services/auth.service';
 import { AuthModule } from './core/auth/auth.module';
 import { EmployeeModule } from './core/employee/employee.module';
 import { DatabaseModule } from './shared/database/database.module';
+import { HealthCheckModule } from './shared/healthcheck/healthcheck.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { DatabaseModule } from './shared/database/database.module';
       isGlobal: true,
     }),
     DatabaseModule,
+    HealthCheckModule,
   ],
   providers: [...commands],
 })
